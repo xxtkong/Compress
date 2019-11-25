@@ -118,7 +118,7 @@ namespace Compress
             if (result.code == 0)
                 msg.PwdFileUrl = result.picurl;
             else
-                msg.PwdFileUrl = "上传失败";
+                msg.PwdFileUrl = "8图片上传失败（七牛云网络图片地址错误）";
             doSendMsg(msg);
             //删除密码图片及文件夹
             Task.Run(() => {
