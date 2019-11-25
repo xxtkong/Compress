@@ -105,44 +105,44 @@ namespace Compress
             if (rowNum > 0)
             {
                 //加载Excel
-                Microsoft.Office.Interop.Excel.Application xlApp = new Microsoft.Office.Interop.Excel.Application();
-                if (xlApp == null)//判断是否装了Excel
-                {
-                    MessageBox.Show("无法创建excel对象，可能您的系统没有安装excel");
-                    return;
-                }
-                xlApp.DefaultFilePath = "";
-                xlApp.DisplayAlerts = true;//是否需要显示提示
-                xlApp.SheetsInNewWorkbook = 1;//返回或设置Microsoft Excel自动插入到新工作簿中的工作表数。
-                Microsoft.Office.Interop.Excel.Workbook xlBook = xlApp.Workbooks.Add(true);//创建工作铺
-                //将ListView的列名导入Excel表第一行
-                foreach (ColumnHeader dc in listView.Columns)
-                {
-                    columnIndex++;//行号自增
-                    xlApp.Cells[rowIndex, columnIndex] = dc.Text;
-                }
-                //将ListView中的数据导入Excel中
-                for (int i = 0; i < rowNum; i++)
-                {
-                    rowIndex++;//列号自增
-                    columnIndex = 0;
-                    for (int j = 0; j < columnNum; j++)
-                    {
-                        columnIndex++;
-                        //注意这个在导出的时候加了“\t” 的目的就是避免导出的数据显示为科学计数法。可以放在每行的首尾。
-                        xlApp.Cells[rowIndex, columnIndex] = Convert.ToString(listView.Items[i].SubItems[j].Text) + "\t";
-                    }
-                }
-                //例外需要说明的是用strFileName,Excel.XlFileFormat.xlExcel9795保存方式时 当你的Excel版本不是95、97 而是2003、2007 时导出的时候会报一个错误：异常来自 HRESULT:0x800A03EC。 解决办法就是换成strFileName, Microsoft.Office.Interop.Excel.XlFileFormat.xlWorkbookNormal。
-                //xlBook.SaveAs(strFileName, Microsoft.Office.Interop.Excel.XlFileFormat.xlWorkbookNormal, Type.Missing, Type.Missing, false, Type.Missing, Microsoft.Office.Interop.Excel.XlSaveAsAccessMode.xlExclusive, Type.Missing, Type.Missing, Type.Missing, Type.Missing, true);
-                xlBook.SaveAs(strFileName, Microsoft.Office.Interop.Excel.XlFileFormat.xlWorkbookNormal, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Microsoft.Office.Interop.Excel.XlSaveAsAccessMode.xlExclusive, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
+                //Microsoft.Office.Interop.Excel.Application xlApp = new Microsoft.Office.Interop.Excel.Application();
+                //if (xlApp == null)//判断是否装了Excel
+                //{
+                //    MessageBox.Show("无法创建excel对象，可能您的系统没有安装excel");
+                //    return;
+                //}
+                //xlApp.DefaultFilePath = "";
+                //xlApp.DisplayAlerts = true;//是否需要显示提示
+                //xlApp.SheetsInNewWorkbook = 1;//返回或设置Microsoft Excel自动插入到新工作簿中的工作表数。
+                //Microsoft.Office.Interop.Excel.Workbook xlBook = xlApp.Workbooks.Add(true);//创建工作铺
+                ////将ListView的列名导入Excel表第一行
+                //foreach (ColumnHeader dc in listView.Columns)
+                //{
+                //    columnIndex++;//行号自增
+                //    xlApp.Cells[rowIndex, columnIndex] = dc.Text;
+                //}
+                ////将ListView中的数据导入Excel中
+                //for (int i = 0; i < rowNum; i++)
+                //{
+                //    rowIndex++;//列号自增
+                //    columnIndex = 0;
+                //    for (int j = 0; j < columnNum; j++)
+                //    {
+                //        columnIndex++;
+                //        //注意这个在导出的时候加了“\t” 的目的就是避免导出的数据显示为科学计数法。可以放在每行的首尾。
+                //        xlApp.Cells[rowIndex, columnIndex] = Convert.ToString(listView.Items[i].SubItems[j].Text) + "\t";
+                //    }
+                //}
+                ////例外需要说明的是用strFileName,Excel.XlFileFormat.xlExcel9795保存方式时 当你的Excel版本不是95、97 而是2003、2007 时导出的时候会报一个错误：异常来自 HRESULT:0x800A03EC。 解决办法就是换成strFileName, Microsoft.Office.Interop.Excel.XlFileFormat.xlWorkbookNormal。
+                ////xlBook.SaveAs(strFileName, Microsoft.Office.Interop.Excel.XlFileFormat.xlWorkbookNormal, Type.Missing, Type.Missing, false, Type.Missing, Microsoft.Office.Interop.Excel.XlSaveAsAccessMode.xlExclusive, Type.Missing, Type.Missing, Type.Missing, Type.Missing, true);
+                //xlBook.SaveAs(strFileName, Microsoft.Office.Interop.Excel.XlFileFormat.xlWorkbookNormal, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Microsoft.Office.Interop.Excel.XlSaveAsAccessMode.xlExclusive, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
 
-                //xlApp = null;
-                //xlBook = null;
-                xlBook.Close(Type.Missing, Type.Missing, Type.Missing);
-                xlApp.Quit();
-                MessageBox.Show("导出文件成功！");
-                GC.Collect();
+                ////xlApp = null;
+                ////xlBook = null;
+                //xlBook.Close(Type.Missing, Type.Missing, Type.Missing);
+                //xlApp.Quit();
+                //MessageBox.Show("导出文件成功！");
+                //GC.Collect();
             }
         }
 

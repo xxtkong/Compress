@@ -57,7 +57,8 @@ namespace Compress
                 if (password == "0") //生成随机6位数压缩密码
                     password = FileHelper.GetRnd(6, true, true, true, true, "");
                 //压缩文件夹
-                FileHelper.CondenseRarOrZip(saveDirectory, saveAddress + "\\" + Path.GetFileNameWithoutExtension(item), true, password);
+                //FileHelper.CondenseRarOrZip(saveDirectory, saveAddress + "\\" + Path.GetFileNameWithoutExtension(item), true, password);
+                FileHelper.ZipDirectory(saveDirectory, saveDirectory + ".rar", password);
                 compress.Tag = CompressStatus.Compress;
                 compress.Pwd = password;
                 compress.Address = saveAddress + "\\" + Path.GetFileNameWithoutExtension(item)+".rar";
@@ -65,6 +66,7 @@ namespace Compress
 
                 ///创建密码图片
                 FileHelper.CreateImgages("解压密码：" + password, saveAddress + "\\" + Path.GetFileNameWithoutExtension(item) + ".jpg");
+               
                 ///上传密码图片
                 FileStream fs = File.OpenRead(saveAddress + "\\" + Path.GetFileNameWithoutExtension(item) + ".jpg");
                 if (ePrice == 0)

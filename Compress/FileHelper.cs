@@ -229,8 +229,9 @@ namespace Compress
         /// <param name="folderToZip">要压缩的文件夹路径</param>   
         /// <param name="zipedFile">压缩文件完整路径</param>   
         /// <param name="password">密码</param>   
+        /// <param name="comment">注释</param>   
         /// <returns>是否压缩成功</returns>   
-        public static bool ZipDirectory(string folderToZip, string zipedFile, string password)
+        public static bool ZipDirectory(string folderToZip, string zipedFile, string password,string comment ="")
         {
             bool result = false;
             if (!Directory.Exists(folderToZip))
@@ -239,7 +240,9 @@ namespace Compress
             ZipOutputStream zipStream = new ZipOutputStream(File.Create(zipedFile));
             zipStream.SetLevel(6);
             if (!string.IsNullOrEmpty(password)) zipStream.Password = password;
+            if (!string.IsNullOrEmpty(comment)) zipStream.SetComment(comment);
 
+          
             result = ZipDirectory(folderToZip, zipStream, "");
 
             zipStream.Finish();

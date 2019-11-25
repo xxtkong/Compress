@@ -62,6 +62,7 @@ namespace Compress
                 //browser.Navigate(loadUrl);
 
 
+
                 browser = new WebBrowser();
                 browser.Dock = DockStyle.Fill;
                 this.panel1.Controls.Add(browser);
