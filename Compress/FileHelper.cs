@@ -367,6 +367,32 @@ namespace Compress
 
         }
 
+        /// <summary>
+        /// 获取文件夹大小
+        /// </summary>
+        /// <param name="dirPath"></param>
+        /// <returns></returns>
+        public static long GetDirectorySize(string dirPath)
+        {
+            if (!System.IO.Directory.Exists(dirPath))
+                return 0;
+            long len = 0;
+            DirectoryInfo di = new DirectoryInfo(dirPath);
+            //获取di目录中所有文件的大小
+            foreach (FileInfo item in di.GetFiles())
+            {
+                len += item.Length;
+            }
+            DirectoryInfo[] dis = di.GetDirectories();
+            if (dis.Length > 0)
+            {
+                for (int i = 0; i < dis.Length; i++)
+                {
+                    len += GetDirectorySize(dis[i].FullName);
+                }
+            }
+            return len;
+        }
         #endregion
 
         #region 解压

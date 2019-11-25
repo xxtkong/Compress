@@ -68,10 +68,21 @@ namespace Compress
                 }
                 foreach (var item in filenames)
                 {
-                    var size = new FileInfo(item).Length / (1024);
-                    ListViewItem listView = new ListViewItem(new string[] { Path.GetFileNameWithoutExtension(item), size+"KB", "0", "0", "未开始","","","","" });
-                    listView1.Items.Add(listView);   
-                    compressHelper.AddCompress(saveAddress, item, elseAddress, password, i,bPrice,ePrice);
+                    if (string.IsNullOrEmpty(Path.GetExtension(item)))
+                    {
+                        var size = FileHelper.GetDirectorySize(item) / (1024);
+                        ListViewItem listView = new ListViewItem(new string[] { Path.GetFileNameWithoutExtension(item), size + "KB", "0", "0", "未开始", "", "", "", "" });
+                        listView1.Items.Add(listView);
+                        compressHelper.AddCompress(saveAddress, item, elseAddress, password, i, bPrice, ePrice);
+                    }
+                    else
+                    {
+                        var size = new FileInfo(item).Length / (1024);
+                        ListViewItem listView = new ListViewItem(new string[] { Path.GetFileNameWithoutExtension(item), size + "KB", "0", "0", "未开始", "", "", "", "" });
+                        listView1.Items.Add(listView);
+                        compressHelper.AddCompress(saveAddress, item, elseAddress, password, i, bPrice, ePrice);
+                    }
+                    
                     i++;
                 }
                 compressHelper.StartCompress();

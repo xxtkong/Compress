@@ -80,11 +80,11 @@ namespace Compress
                 UseCdnDomains = true
             };
             FormUploader upload = new FormUploader(config);
-            HttpResult result = upload.UploadStream(stream, fileName, uploadToken, null);
+            HttpResult result = upload.UploadStream(stream, fileName+".jpg", uploadToken, null);
             StringBuilder sbDomain = new StringBuilder(60);
             iniFileHelper.GetIniString("qiniu", "Domain", "", sbDomain, sbDomain.Capacity);
             imgUrRL = sbDomain.Length > 0 ? sbDomain.ToString() : imgUrRL;
-            compressMsg.PwdFileUrl = imgUrRL + fileName;
+            compressMsg.PwdFileUrl = imgUrRL + fileName + ".jpg";
             doSendMsg(compressMsg);
             if (result.Code == 200)
             {

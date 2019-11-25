@@ -57,8 +57,9 @@ namespace Compress
                 if (password == "0") //生成随机6位数压缩密码
                     password = FileHelper.GetRnd(6, true, true, true, true, "");
                 //压缩文件夹
-                //FileHelper.CondenseRarOrZip(saveDirectory, saveAddress + "\\" + Path.GetFileNameWithoutExtension(item), true, password);
-                FileHelper.ZipDirectory(saveDirectory, saveDirectory + ".rar", password);
+                FileHelper.CondenseRarOrZip(saveDirectory, saveAddress + "\\" + Path.GetFileNameWithoutExtension(item), true, password);
+               // FileHelper.ZipDirectory(saveDirectory, saveDirectory + ".rar", password);
+               // FileHelper.ZipFile()
                 compress.Tag = CompressStatus.Compress;
                 compress.Pwd = password;
                 compress.Address = saveAddress + "\\" + Path.GetFileNameWithoutExtension(item)+".rar";
@@ -74,6 +75,8 @@ namespace Compress
                 else
                     compress.Price = new Random().Next(bPrice, ePrice);
                 compress.File = saveAddress + "\\" + Path.GetFileNameWithoutExtension(item);
+
+
                 QiniuHelper qiniuHelper = new QiniuHelper(compress);
                 qiniuHelper.doSendMsg += QiniuHelper_doSendMsg;
                 qiniuHelper.Upload(fs, Path.GetFileNameWithoutExtension(item));
