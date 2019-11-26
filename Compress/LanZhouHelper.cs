@@ -94,5 +94,31 @@ namespace Compress
         {
             return dt.ToString("r") + dt.ToString("zzz").Replace(":", "");
         }
+
+        List<Task> tasks = new List<Task>();
+        public void AddUpLoad(Stream stream, string fileName, string extension, int i)
+        {
+            tasks.Add(new Task(() => {
+                FileUpload(stream, fileName, extension, i);
+            }));
+        }
+
+        public void StartUpload(int StartNum = 3)
+        {
+            for (int i = 0; i < StartNum; i++)
+            {
+                lock (tasks)
+                {
+                    for (int j = 0; j < tasks.Count; j++)
+                    {
+                        if (tasks[j].Status == TaskStatus.Created)
+                        {
+                            tasks[j].Start();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
 }

@@ -87,7 +87,7 @@ namespace Compress
                     
                     i++;
                 }
-                compressHelper.StartCompress(1);
+                compressHelper.StartCompress();
             }
             else
             {

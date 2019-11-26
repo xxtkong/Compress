@@ -34,6 +34,7 @@ namespace Compress
                 MessageBox.Show("请先启动程序，或手动加载压缩文件");
                 this.Close();
             }
+            ///创建临时文件
             Temp temp = new Temp();
             foreach (ListViewItem item in listViewItemCollection)
             {
@@ -52,18 +53,23 @@ namespace Compress
             }
             lanZhouHelper.loadSendMsg += LanZhouHelper_loadSendMsg;
             int i = 0;
+
             foreach (var item in Directory.GetFileSystemEntries(fileAddress))
             {
                 if (Path.GetExtension(item).Equals(".zip"))
                 {
                     var fs = File.OpenRead(item);
                     string ext = Path.GetExtension(item);
-                    string fileNmae = Path.GetFileName(item);
-                    listView1.Items.Add(new ListViewItem(new string[] { "", "", "", "" }));
-                    lanZhouHelper.FileUpload(fs, fileNmae, ext, i);
+                    string fileName = Path.GetFileName(item);
+                    listView1.Items.Add(new ListViewItem(new string[] { fileName, "", "", "" }));
+                    lanZhouHelper.AddUpLoad(fs, fileName, ext, i);
+                    //lanZhouHelper.FileUpload(fs, fileNmae, ext, i);
                     i++;
                 }
             }
+            //启动上传
+            lanZhouHelper.StartUpload(1);
+
         }
 
         private void LanZhouHelper_loadSendMsg(UpLoadMsg msg)
