@@ -29,6 +29,15 @@ namespace Compress
             string postData = string.Format("action=login&task=login&ref=&formhash=002b2898&username={0}&password={1}", userName, pwd);
             string responseFromServer = HttpHelper.Post("https://up.woozooo.com/account.php", postData, cc);
             cookieContainer = cc;
+            loadSendMsg += LanZhouHelper_loadSendMsg;
+        }
+
+        private void LanZhouHelper_loadSendMsg(UpLoadMsg msg)
+        {
+            if (msg.Status == "上传成功")
+            {
+                StartUpload(1);
+            }
         }
 
         public string FileUpload(Stream stream, string fileName, string extension,int i)
