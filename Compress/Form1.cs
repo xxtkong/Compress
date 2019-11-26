@@ -73,6 +73,7 @@ namespace Compress
                         var size = FileHelper.GetDirectorySize(item) / (1024);
                         ListViewItem listView = new ListViewItem(new string[] { Path.GetFileNameWithoutExtension(item), size + "KB", "0", "0", "未开始", "", "", "", "" });
                         listView1.Items.Add(listView);
+                        //上传文件夹
                         compressHelper.AddCompress(saveAddress, item, elseAddress, password, i, bPrice, ePrice);
                     }
                     else
@@ -80,12 +81,13 @@ namespace Compress
                         var size = new FileInfo(item).Length / (1024);
                         ListViewItem listView = new ListViewItem(new string[] { Path.GetFileNameWithoutExtension(item), size + "KB", "0", "0", "未开始", "", "", "", "" });
                         listView1.Items.Add(listView);
+                        //上传文件
                         compressHelper.AddCompress(saveAddress, item, elseAddress, password, i, bPrice, ePrice);
                     }
                     
                     i++;
                 }
-                compressHelper.StartCompress();
+                compressHelper.StartCompress(1);
             }
             else
             {
@@ -290,7 +292,7 @@ namespace Compress
             using (FileStream fs = new FileStream(fileAddress, FileMode.Create, FileAccess.Write))
             {
                 ExcelPackage package = new ExcelPackage(fs);
-                package.Workbook.Worksheets.Add("Students");
+                package.Workbook.Worksheets.Add("Sheet1");
                 ExcelWorksheet sheet = package.Workbook.Worksheets[1];
                 #region write header
                 sheet.Cells[1, 1].Value = "文档名";

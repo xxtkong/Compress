@@ -40,7 +40,7 @@ namespace Compress
                 var address = item.SubItems[8].Text;
                 temp.CreateTemp(address);
             }
-            temp.StartTask(3);
+            temp.StartTask(listViewItemCollection.Count);
             
 
             LanZhouHelper lanZhouHelper = new LanZhouHelper();
@@ -68,6 +68,7 @@ namespace Compress
 
         private void LanZhouHelper_loadSendMsg(UpLoadMsg msg)
         {
+           
             this.Invoke(new MethodInvoker(() =>
             {
                 this.Invoke((MethodInvoker)delegate ()
@@ -88,61 +89,57 @@ namespace Compress
         /// <param name="e"></param>
         private void button1_Click(object sender, EventArgs e)
         {
-            DoExport(this.listView1, "上传");
+            List<UpLoadFile> list = new List<UpLoadFile>();
+            for (int i = 0; i < listView1.Items.Count; i++)
+            {
+                list.Add(new UpLoadFile()
+                {
+                    FileName = listView1.Items[i].SubItems[0].Text,
+                    FileUrl = listView1.Items[i].SubItems[1].Text,
+                    Pwd = listView1.Items[i].SubItems[2].Text,
+                    Status = listView1.Items[i].SubItems[3].Text,
+                });
+            }
+            string fileaddress = "D:/上传文档.xlsx";
+            Export(fileaddress, list);
+            MessageBox.Show("下载地址:" + fileaddress, "下载成功");
         }
 
-
-        private void DoExport(ListView listView, string strFileName)
+        public void Export(string fileAddress, IList<UpLoadFile> students)
         {
-            int rowNum = listView.Items.Count;
-            int columnNum = listView.Items[0].SubItems.Count;
-            int rowIndex = 1;//行号
-            int columnIndex = 0;//列号
-            if (rowNum == 0 || string.IsNullOrEmpty(strFileName))//列表为空或导出的文件名为空
+            using (FileStream fs = new FileStream(fileAddress, FileMode.Create, FileAccess.Write))
             {
-                return;
-            }
-            if (rowNum > 0)
-            {
-                //加载Excel
-                //Microsoft.Office.Interop.Excel.Application xlApp = new Microsoft.Office.Interop.Excel.Application();
-                //if (xlApp == null)//判断是否装了Excel
-                //{
-                //    MessageBox.Show("无法创建excel对象，可能您的系统没有安装excel");
-                //    return;
-                //}
-                //xlApp.DefaultFilePath = "";
-                //xlApp.DisplayAlerts = true;//是否需要显示提示
-                //xlApp.SheetsInNewWorkbook = 1;//返回或设置Microsoft Excel自动插入到新工作簿中的工作表数。
-                //Microsoft.Office.Interop.Excel.Workbook xlBook = xlApp.Workbooks.Add(true);//创建工作铺
-                ////将ListView的列名导入Excel表第一行
-                //foreach (ColumnHeader dc in listView.Columns)
-                //{
-                //    columnIndex++;//行号自增
-                //    xlApp.Cells[rowIndex, columnIndex] = dc.Text;
-                //}
-                ////将ListView中的数据导入Excel中
-                //for (int i = 0; i < rowNum; i++)
-                //{
-                //    rowIndex++;//列号自增
-                //    columnIndex = 0;
-                //    for (int j = 0; j < columnNum; j++)
-                //    {
-                //        columnIndex++;
-                //        //注意这个在导出的时候加了“\t” 的目的就是避免导出的数据显示为科学计数法。可以放在每行的首尾。
-                //        xlApp.Cells[rowIndex, columnIndex] = Convert.ToString(listView.Items[i].SubItems[j].Text) + "\t";
-                //    }
-                //}
-                ////例外需要说明的是用strFileName,Excel.XlFileFormat.xlExcel9795保存方式时 当你的Excel版本不是95、97 而是2003、2007 时导出的时候会报一个错误：异常来自 HRESULT:0x800A03EC。 解决办法就是换成strFileName, Microsoft.Office.Interop.Excel.XlFileFormat.xlWorkbookNormal。
-                ////xlBook.SaveAs(strFileName, Microsoft.Office.Interop.Excel.XlFileFormat.xlWorkbookNormal, Type.Missing, Type.Missing, false, Type.Missing, Microsoft.Office.Interop.Excel.XlSaveAsAccessMode.xlExclusive, Type.Missing, Type.Missing, Type.Missing, Type.Missing, true);
-                //xlBook.SaveAs(strFileName, Microsoft.Office.Interop.Excel.XlFileFormat.xlWorkbookNormal, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Microsoft.Office.Interop.Excel.XlSaveAsAccessMode.xlExclusive, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
+                ExcelPackage package = new ExcelPackage(fs);
+                package.Workbook.Worksheets.Add("Students");
+                ExcelWorksheet sheet = package.Workbook.Worksheets[1];
+                #region write header
+                sheet.Cells[1, 1].Value = "上传文件";
+                sheet.Cells[1, 2].Value = "分享地址";
+                sheet.Cells[1, 3].Value = "分享密码";
+                sheet.Cells[1, 4].Value = "状态";
+                using (ExcelRange range = sheet.Cells[1, 1, 1, 4])
+                {
+                    range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                    range.Style.Fill.BackgroundColor.SetColor(Color.Gray);
+                    range.Style.Border.Bottom.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thick;
+                    range.Style.Border.Bottom.Color.SetColor(Color.Black);
+                    range.AutoFitColumns(4);
+                }
+                #endregion
 
-                ////xlApp = null;
-                ////xlBook = null;
-                //xlBook.Close(Type.Missing, Type.Missing, Type.Missing);
-                //xlApp.Quit();
-                //MessageBox.Show("导出文件成功！");
-                //GC.Collect();
+                #region write content
+                int pos = 2;
+                foreach (UpLoadFile s in students)
+                {
+                    sheet.Cells[pos, 1].Value = s.FileName;
+                    sheet.Cells[pos, 2].Value = s.FileUrl;
+                    sheet.Cells[pos, 3].Value = s.Pwd;
+                    sheet.Cells[pos, 4].Value = s.Status;
+                    pos++;
+                }
+                package.Save();
+                #endregion
+                fs.Close();
             }
         }
 

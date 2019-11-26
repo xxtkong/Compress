@@ -19,4 +19,12 @@ namespace Compress
         public string Price { get; set; }
         public string Address { get; set; }
     }
+
+    public class UpLoadFile
+    {
+        public string FileName { get; set; }
+        public string Pwd { get; set; }
+        public string FileUrl { get; set; }
+        public string Status { get; set; }
+    }
 }

@@ -57,46 +57,27 @@ namespace Compress
                 if (password == "0") //生成随机6位数压缩密码
                     password = FileHelper.GetRnd(6, true, true, true, true, "");
                 //压缩文件夹
-                FileHelper.CondenseRarOrZip(saveDirectory, saveAddress + "\\" + Path.GetFileNameWithoutExtension(item), true, password);
-               // FileHelper.ZipDirectory(saveDirectory, saveDirectory + ".rar", password);
+                //FileHelper.CondenseRarOrZip(saveDirectory, saveAddress + "\\" + Path.GetFileNameWithoutExtension(item), true, password);
+                //采用ZIP 压缩
+                FileHelper.ZipDirectory(saveDirectory, saveDirectory + ".rar", "");
                // FileHelper.ZipFile()
                 compress.Tag = CompressStatus.Compress;
                 compress.Pwd = password;
                 compress.Address = saveAddress + "\\" + Path.GetFileNameWithoutExtension(item)+".rar";
                 doSendMsg(compress);
-
                 ///创建密码图片
                 FileHelper.CreateImgages("解压密码：" + password, saveAddress + "\\" + Path.GetFileNameWithoutExtension(item) + ".jpg");
-               
-                ///上传密码图片
+                /////上传密码图片
                 FileStream fs = File.OpenRead(saveAddress + "\\" + Path.GetFileNameWithoutExtension(item) + ".jpg");
                 if (ePrice == 0)
                     compress.Price = bPrice;
                 else
                     compress.Price = new Random().Next(bPrice, ePrice);
                 compress.File = saveAddress + "\\" + Path.GetFileNameWithoutExtension(item);
-
-
                 QiniuHelper qiniuHelper = new QiniuHelper(compress);
                 qiniuHelper.doSendMsg += QiniuHelper_doSendMsg;
                 qiniuHelper.Upload(fs, Path.GetFileNameWithoutExtension(item));
 
-
-
-                //try
-                //{
-                //    byte[] buffur = new byte[fs.Length];
-                //    fs.Read(buffur, 0, (int)fs.Length);
-                //}
-                //catch (Exception)
-                //{
-                //    throw;
-                //}
-                //finally
-                //{
-                //    if (fs != null)
-                //        fs.Close();
-                //}
             }
             catch (Exception)
             {
@@ -106,6 +87,7 @@ namespace Compress
             }
         }
         IniFileHelper iniFileHelper = new IniFileHelper();
+        private static object obj = new object();
         private void QiniuHelper_doSendMsg(CompressMsg msg)
         {
             msg.Tag = CompressStatus.End;
@@ -114,11 +96,15 @@ namespace Compress
             iniFileHelper.GetIniString("pic", "Pid", "", sbPid, sbPid.Capacity);
             StringBuilder sbKey = new StringBuilder(60);
             iniFileHelper.GetIniString("pic", "Key", "", sbKey, sbKey.Capacity);
+            //这里采用单线程执行。免得8图片抗不做
             var result = HttpHelper.Get<PicResult>("http://web.8tupian.com/api/b.php?act=up1&pic=" + msg.PwdFileUrl + "&price=" + msg.Price + "&pid=" + sbPid + "&key=" + sbKey + "");
             if (result.code == 0)
                 msg.PwdFileUrl = result.picurl;
             else
+            {
                 msg.PwdFileUrl = "8图片上传失败（七牛云网络图片地址错误）";
+                msg.Tag = CompressStatus.Error;
+            }
             doSendMsg(msg);
             //删除密码图片及文件夹
             Task.Run(() => {
@@ -138,12 +124,17 @@ namespace Compress
                     fs.Write(bytes, 0, bytes.Length);
                     fs.Close();
                 }
-                
+
 
                 var img = msg.File + ".jpg";
                 File.Delete(img);
                 Directory.Delete(msg.File);
             });
+
+            //lock (obj)
+            //{
+
+            //}
         }
 
         public void StartCompress(int StartNum = 3)
