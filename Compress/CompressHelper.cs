@@ -29,16 +29,16 @@ namespace Compress
             }
         }
 
-        public void AddCompress(string saveAddress,string item,string elseAddress, string password = "", int id = 0, int bPrice = 0, int ePrice = 0)
+        public void AddCompress(string saveAddress,string item,string elseAddress, string password = "", int id = 0, int bPrice = 0, int ePrice = 0, string comment = "")
         {
             Thread tsk = new Thread(() =>
             {
-                Operation(saveAddress, item, elseAddress, password,id, bPrice, ePrice);
+                Operation(saveAddress, item, elseAddress, password,id, bPrice, ePrice,comment);
             });
             list.Add(tsk);
         }
 
-        public void Operation(string saveAddress, string item, string elseAddress,string password ="",int id = 0, int bPrice = 0, int ePrice = 0)
+        public void Operation(string saveAddress, string item, string elseAddress,string password ="",int id = 0, int bPrice = 0, int ePrice = 0,string comment="")
         {
             try
             {
@@ -59,25 +59,32 @@ namespace Compress
                 //压缩文件夹
                 //FileHelper.CondenseRarOrZip(saveDirectory, saveAddress + "\\" + Path.GetFileNameWithoutExtension(item), true, password);
                 //采用ZIP 压缩
-                FileHelper.ZipDirectory(saveDirectory, saveDirectory + ".rar", "");
+                FileHelper.ZipDirectory(saveDirectory, saveDirectory + ".rar",password,comment);
                // FileHelper.ZipFile()
                 compress.Tag = CompressStatus.Compress;
                 compress.Pwd = password;
                 compress.Address = saveAddress + "\\" + Path.GetFileNameWithoutExtension(item)+".rar";
                 doSendMsg(compress);
-                ///创建密码图片
-                FileHelper.CreateImgages("解压密码：" + password, saveAddress + "\\" + Path.GetFileNameWithoutExtension(item) + ".jpg");
-                /////上传密码图片
-                FileStream fs = File.OpenRead(saveAddress + "\\" + Path.GetFileNameWithoutExtension(item) + ".jpg");
-                if (ePrice == 0)
-                    compress.Price = bPrice;
+                if (!string.IsNullOrEmpty(password))
+                {
+                    ///创建密码图片
+                    FileHelper.CreateImgages("解压密码：" + password, saveAddress + "\\" + Path.GetFileNameWithoutExtension(item) + ".jpg");
+                    /////上传密码图片
+                    FileStream fs = File.OpenRead(saveAddress + "\\" + Path.GetFileNameWithoutExtension(item) + ".jpg");
+                    if (ePrice == 0)
+                        compress.Price = bPrice;
+                    else
+                        compress.Price = new Random().Next(bPrice, ePrice);
+                    compress.File = saveAddress + "\\" + Path.GetFileNameWithoutExtension(item);
+                    QiniuHelper qiniuHelper = new QiniuHelper(compress);
+                    qiniuHelper.doSendMsg += QiniuHelper_doSendMsg;
+                    qiniuHelper.Upload(fs, Path.GetFileNameWithoutExtension(item));
+                }
                 else
-                    compress.Price = new Random().Next(bPrice, ePrice);
-                compress.File = saveAddress + "\\" + Path.GetFileNameWithoutExtension(item);
-                QiniuHelper qiniuHelper = new QiniuHelper(compress);
-                qiniuHelper.doSendMsg += QiniuHelper_doSendMsg;
-                qiniuHelper.Upload(fs, Path.GetFileNameWithoutExtension(item));
-
+                {
+                    compress.Tag = CompressStatus.End;
+                    doSendMsg(compress);
+                }
             }
             catch (Exception)
             {

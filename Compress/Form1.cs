@@ -52,6 +52,7 @@ namespace Compress
                 }
                 string[] filenames = Directory.GetFileSystemEntries(fileAddress);
                 var elseAddress = this.txtFileAddress3.Text;
+                var comment = this.txtComment.Text;
                 int i = 0;string password = "";int bPrice = 0, ePrice = 0;
                 if (rb1.Checked)
                     password = "0";
@@ -74,7 +75,7 @@ namespace Compress
                         ListViewItem listView = new ListViewItem(new string[] { Path.GetFileNameWithoutExtension(item), size + "KB", "0", "0", "未开始", "", "", "", "" });
                         listView1.Items.Add(listView);
                         //上传文件夹
-                        compressHelper.AddCompress(saveAddress, item, elseAddress, password, i, bPrice, ePrice);
+                        compressHelper.AddCompress(saveAddress, item, elseAddress, password, i, bPrice, ePrice, comment);
                     }
                     else
                     {
@@ -82,9 +83,8 @@ namespace Compress
                         ListViewItem listView = new ListViewItem(new string[] { Path.GetFileNameWithoutExtension(item), size + "KB", "0", "0", "未开始", "", "", "", "" });
                         listView1.Items.Add(listView);
                         //上传文件
-                        compressHelper.AddCompress(saveAddress, item, elseAddress, password, i, bPrice, ePrice);
+                        compressHelper.AddCompress(saveAddress, item, elseAddress, password, i, bPrice, ePrice, comment);
                     }
-                    
                     i++;
                 }
                 compressHelper.StartCompress();

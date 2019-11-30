@@ -26,7 +26,8 @@ namespace Compress
             this.fileAddress = fileAddress;
             InitializeComponent();
         }
-
+        LanZhouHelper lanZhouHelper = new LanZhouHelper();
+       
         private void UpLoad_Load(object sender, EventArgs e)
         {
             if (listViewItemCollection == null || listViewItemCollection.Count == 0)
@@ -34,58 +35,56 @@ namespace Compress
                 MessageBox.Show("请先启动程序，或手动加载压缩文件");
                 this.Close();
             }
-            ///创建临时文件
-            Temp temp = new Temp();
-            foreach (ListViewItem item in listViewItemCollection)
-            {
-                var address = item.SubItems[8].Text;
-                temp.CreateTemp(address);
-            }
-            temp.StartTask(listViewItemCollection.Count);
             
-
-            LanZhouHelper lanZhouHelper = new LanZhouHelper();
             if (LanZhouHelper.cookieContainer.Count == 1)
             {
                 MessageBox.Show("请先录入蓝奏云用户名或密码");
                 this.Close();
                 return;
             }
-            lanZhouHelper.loadSendMsg += LanZhouHelper_loadSendMsg;
+
+            ///创建临时文件并上传
+            Temp temp = new Temp();
+            temp.CompressMsg += Temp_CompressMsg;
             int i = 0;
-
-            foreach (var item in Directory.GetFileSystemEntries(fileAddress))
+            foreach (ListViewItem item in listViewItemCollection)
             {
-                if (Path.GetExtension(item).Equals(".zip"))
-                {
-                    var fs = File.OpenRead(item);
-                    string ext = Path.GetExtension(item);
-                    string fileName = Path.GetFileName(item);
-                    listView1.Items.Add(new ListViewItem(new string[] { fileName, "", "", "" }));
-                    lanZhouHelper.AddUpLoad(fs, fileName, ext, i);
-                    //lanZhouHelper.FileUpload(fs, fileNmae, ext, i);
-                    i++;
-                }
+                var address = item.SubItems[8].Text;
+                listView1.Items.Add(new ListViewItem(new string[] { address, "", "", "" }));
+                temp.AddTask(address, i);
+                i++;
             }
-            //启动上传
-            lanZhouHelper.StartUpload(1);
-
+            //启动线程
+            temp.RunTask();
         }
 
-        private void LanZhouHelper_loadSendMsg(UpLoadMsg msg)
+        private void Temp_CompressMsg(UpLoadMsg msg)
         {
-           
-            this.Invoke(new MethodInvoker(() =>
+            switch (msg.Status)
             {
-                this.Invoke((MethodInvoker)delegate ()
-                {
-                    listView1.Items[msg.Id].SubItems[0].Text = msg.FileName;
-                    listView1.Items[msg.Id].SubItems[1].Text = msg.ShareAddress;
-                    listView1.Items[msg.Id].SubItems[2].Text = msg.Pwd;
-                    listView1.Items[msg.Id].SubItems[3].Text = msg.Status;
-                    Application.DoEvents();
-                });
-            }));
+                case "压缩完成":
+                    var fs = File.OpenRead(msg.FileName);
+                    string ext = Path.GetExtension(msg.FileName);
+                    string fileName = Path.GetFileName(msg.FileName);
+                    this.Invoke((MethodInvoker)delegate ()
+                    {
+                        listView1.Items[msg.Id].SubItems[3].Text = msg.Status;
+                        Application.DoEvents();
+                    });
+                    lanZhouHelper.AddUpLoad(fs, fileName, ext, msg.Id, listView1);
+                    break;
+                case "上传成功":
+                    this.Invoke(new MethodInvoker(() =>
+                    {
+                        listView1.Items[msg.Id].SubItems[0].Text = msg.FileName;
+                        listView1.Items[msg.Id].SubItems[1].Text = msg.ShareAddress;
+                        listView1.Items[msg.Id].SubItems[2].Text = msg.Pwd;
+                        listView1.Items[msg.Id].SubItems[3].Text = msg.Status;
+                    }));
+                    break;
+                default:
+                    break;
+            }   
         }
 
         /// <summary>
