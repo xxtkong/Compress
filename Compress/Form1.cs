@@ -43,13 +43,20 @@ namespace Compress
                     MessageBox.Show("请选择需要压缩文件路径");
                     return;
                 }
+                if (!Directory.Exists(fileAddress))
+                {
+                    MessageBox.Show("请先创建需要压缩的文件夹");
+                    return;
+                }
                 //获取保存文件夹路径
-                var saveAddress = this.txtFileAddress2.Text;
+                 var saveAddress = this.txtFileAddress2.Text;
                 if (string.IsNullOrEmpty(saveAddress))
                 {
                     MessageBox.Show("请选择压缩后生成文件路径");
                     return;
                 }
+                if (!Directory.Exists(saveAddress))
+                    Directory.CreateDirectory(saveAddress);
                 string[] filenames = Directory.GetFileSystemEntries(fileAddress);
                 var elseAddress = this.txtFileAddress3.Text;
                 var comment = this.txtComment.Text;
@@ -333,6 +340,13 @@ namespace Compress
                 #endregion
                 fs.Close();
             }
+        }
+
+        private void 操着说明ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Help help = new Help();
+            help.StartPosition = FormStartPosition.CenterScreen;
+            help.Show();
         }
     }
 }

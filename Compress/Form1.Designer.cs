@@ -76,7 +76,8 @@
             this.BaiduSM = new System.Windows.Forms.ToolStripMenuItem();
             this.lanzhouSM = new System.Windows.Forms.ToolStripMenuItem();
             this.picSeeting = new System.Windows.Forms.ToolStripMenuItem();
-            this.其他ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.wordpress配置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.操着说明ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -509,7 +510,8 @@
             this.网络图片地址配置ToolStripMenuItem,
             this.上传地址配置ToolStripMenuItem,
             this.picSeeting,
-            this.其他ToolStripMenuItem});
+            this.wordpress配置ToolStripMenuItem,
+            this.操着说明ToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
@@ -562,11 +564,18 @@
             this.picSeeting.Text = "8图片配置";
             this.picSeeting.Click += new System.EventHandler(this.picSeeting_Click);
             // 
-            // 其他ToolStripMenuItem
+            // wordpress配置ToolStripMenuItem
             // 
-            this.其他ToolStripMenuItem.Name = "其他ToolStripMenuItem";
-            this.其他ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
-            this.其他ToolStripMenuItem.Text = "其他";
+            this.wordpress配置ToolStripMenuItem.Name = "wordpress配置ToolStripMenuItem";
+            this.wordpress配置ToolStripMenuItem.Size = new System.Drawing.Size(106, 21);
+            this.wordpress配置ToolStripMenuItem.Text = "wordpress配置";
+            // 
+            // 操着说明ToolStripMenuItem
+            // 
+            this.操着说明ToolStripMenuItem.Name = "操着说明ToolStripMenuItem";
+            this.操着说明ToolStripMenuItem.Size = new System.Drawing.Size(68, 21);
+            this.操着说明ToolStripMenuItem.Text = "操着说明";
+            this.操着说明ToolStripMenuItem.Click += new System.EventHandler(this.操着说明ToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -620,7 +629,6 @@
         private System.Windows.Forms.ToolStripMenuItem BaiduSM;
         private System.Windows.Forms.ToolStripMenuItem lanzhouSM;
         private System.Windows.Forms.ToolStripMenuItem picSeeting;
-        private System.Windows.Forms.ToolStripMenuItem 其他ToolStripMenuItem;
         private System.Windows.Forms.ListView listView1;
         public System.Windows.Forms.ColumnHeader ch1;
         private System.Windows.Forms.ColumnHeader ch2;
@@ -644,6 +652,8 @@
         private System.Windows.Forms.ColumnHeader ch9;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox txtComment;
+        private System.Windows.Forms.ToolStripMenuItem wordpress配置ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 操着说明ToolStripMenuItem;
     }
 }
 
