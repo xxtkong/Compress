@@ -34,6 +34,7 @@ namespace Compress
             {
                 MessageBox.Show("请先启动程序，或手动加载压缩文件");
                 this.Close();
+                return;
             }
             
             if (LanZhouHelper.cookieContainer.Count == 1)

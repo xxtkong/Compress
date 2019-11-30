@@ -50,10 +50,17 @@ namespace Compress.UploadExt
             if (b)
             {
                 CompressMsg(new UpLoadMsg() { Id =i, FileName = temp+".zip", Status = "压缩完成" });
-                //删除文件
-                //Directory.Delete(Path.GetDirectoryName(address) + "\\" + Path.GetFileNameWithoutExtension(address), true);
-                //Directory.Delete(Path.GetDirectoryName(address) + "\\" + Path.GetFileNameWithoutExtension(address) + "temp", true);
-                //File.Delete(Path.GetDirectoryName(address) + "\\" + Path.GetFileNameWithoutExtension(address) + ".rar");
+                var old = Path.GetDirectoryName(address) + "\\" + Path.GetFileNameWithoutExtension(address);
+                if(Directory.Exists(old))
+                    Directory.Delete(old, true);
+                if (Directory.Exists(temp))
+                    Directory.Delete(temp, true);
+                var rar = Path.GetDirectoryName(address) + "\\" + Path.GetFileNameWithoutExtension(address) + ".rar";
+                if (File.Exists(rar))
+                    File.Delete(rar);
+                var txt = Path.GetDirectoryName(address) + "\\" + Path.GetFileNameWithoutExtension(address) + ".txt";
+                if (File.Exists(txt))
+                    File.Delete(txt);
             }
         }
 

@@ -12,8 +12,6 @@ namespace Compress
 {
     public class LanZhouHelper
     {
-
-
         public static CookieContainer cookieContainer = null;
         IniFileHelper iniFileHelper = new IniFileHelper();
         private string userName = "", pwd = "";
@@ -35,9 +33,6 @@ namespace Compress
             }
            
         }
-
-        
-
         public string FileUpload(Stream stream, string fileName, string extension,int i)
         {
             if (cookieContainer == null)
