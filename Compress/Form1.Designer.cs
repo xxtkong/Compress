@@ -574,7 +574,7 @@
             // 
             this.操着说明ToolStripMenuItem.Name = "操着说明ToolStripMenuItem";
             this.操着说明ToolStripMenuItem.Size = new System.Drawing.Size(68, 21);
-            this.操着说明ToolStripMenuItem.Text = "操着说明";
+            this.操着说明ToolStripMenuItem.Text = "关于软件";
             this.操着说明ToolStripMenuItem.Click += new System.EventHandler(this.操着说明ToolStripMenuItem_Click);
             // 
             // Form1
