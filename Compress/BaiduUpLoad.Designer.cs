@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BaiduUpLoad));
             this.button1 = new System.Windows.Forms.Button();
             this.listView1 = new System.Windows.Forms.ListView();
             this.ch0 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -38,9 +39,10 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(33, 23);
+            this.button1.Location = new System.Drawing.Point(25, 18);
+            this.button1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(127, 37);
+            this.button1.Size = new System.Drawing.Size(95, 30);
             this.button1.TabIndex = 1;
             this.button1.Text = "下载";
             this.button1.UseVisualStyleBackColor = true;
@@ -54,9 +56,10 @@
             this.ch3});
             this.listView1.GridLines = true;
             this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(12, 83);
+            this.listView1.Location = new System.Drawing.Point(9, 66);
+            this.listView1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(1286, 499);
+            this.listView1.Size = new System.Drawing.Size(966, 400);
             this.listView1.TabIndex = 2;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
@@ -82,11 +85,13 @@
             // 
             // BaiduUpLoad
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1312, 597);
+            this.ClientSize = new System.Drawing.Size(984, 478);
             this.Controls.Add(this.listView1);
             this.Controls.Add(this.button1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "BaiduUpLoad";
