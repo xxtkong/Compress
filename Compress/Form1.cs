@@ -1,4 +1,5 @@
-﻿using OfficeOpenXml;
+﻿using AutoUpdaterDotNET;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -135,8 +136,19 @@ namespace Compress
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            //检查更新
+            AutoUpdater.ApplicationExitEvent += AutoUpdater_ApplicationExitEvent;
+            AutoUpdater.Start("https://www.bangbangwo.net/Compress/UpdaterCompress.xml");
+
             compressHelper.ThreadNum = 3;//线程数，不设置默认为3
             compressHelper.doSendMsg += SendMsgHander;//压缩过程处理事件
+        }
+
+        private void AutoUpdater_ApplicationExitEvent()
+        {
+            Text = @"Closing application...";
+            Thread.Sleep(5000);
+            Application.Exit();
         }
 
         private void SendMsgHander(CompressMsg msg)

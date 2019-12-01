@@ -28,14 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Help));
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.label1 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.labelVersion = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -63,7 +64,7 @@
             // 
             this.panel1.Controls.Add(this.label6);
             this.panel1.Controls.Add(this.label5);
-            this.panel1.Controls.Add(this.label4);
+            this.panel1.Controls.Add(this.labelVersion);
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.linkLabel1);
             this.panel1.Controls.Add(this.label2);
@@ -73,32 +74,14 @@
             this.panel1.Size = new System.Drawing.Size(424, 226);
             this.panel1.TabIndex = 2;
             // 
-            // label2
+            // label6
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(50, 59);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(281, 12);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "开源地址： https://github.com/xxtkong/Compress";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(50, 96);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(65, 12);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "操作手册：";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(50, 136);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(95, 12);
-            this.label4.TabIndex = 3;
-            this.label4.Text = "当前版本：1.0.1";
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(110, 23);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(209, 12);
+            this.label6.TabIndex = 5;
+            this.label6.Text = "本小软件是全部开源的，可自行修改。";
             // 
             // label5
             // 
@@ -110,14 +93,32 @@
             this.label5.TabIndex = 4;
             this.label5.Text = "本软件仅供学习交流使用。若被封号，请自行负责";
             // 
-            // label6
+            // labelVersion
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(110, 23);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(209, 12);
-            this.label6.TabIndex = 5;
-            this.label6.Text = "本小软件是全部开源的，可自行修改。";
+            this.labelVersion.AutoSize = true;
+            this.labelVersion.Location = new System.Drawing.Point(50, 136);
+            this.labelVersion.Name = "labelVersion";
+            this.labelVersion.Size = new System.Drawing.Size(107, 12);
+            this.labelVersion.TabIndex = 3;
+            this.labelVersion.Text = "当前版本：1.0.0.0";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(50, 96);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(65, 12);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "操作手册：";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(50, 59);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(281, 12);
+            this.label2.TabIndex = 0;
+            this.label2.Text = "开源地址： https://github.com/xxtkong/Compress";
             // 
             // Help
             // 
@@ -125,6 +126,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(454, 263);
             this.Controls.Add(this.panel1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Help";
@@ -143,7 +145,7 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label labelVersion;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
     }
