@@ -148,6 +148,7 @@
       <DependentUpon>Load.cs</DependentUpon>
     </Compile>
     <Compile Include="LoadFile.cs" />
+    <Compile Include="LogHelper.cs" />
     <Compile Include="PicResult.cs" />
     <Compile Include="PicSeeting.cs">
       <SubType>Form</SubType>

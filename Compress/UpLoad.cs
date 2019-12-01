@@ -72,7 +72,11 @@ namespace Compress
                         listView1.Items[msg.Id].SubItems[3].Text = msg.Status;
                         Application.DoEvents();
                     });
+                    //System.Net.ServicePointManager.DefaultConnectionLimit = 50;
+                    System.GC.Collect();
                     lanZhouHelper.AddUpLoad(fs, fileName, ext, msg.Id, listView1);
+
+                   
                     break;
                 case "上传成功":
                     this.Invoke(new MethodInvoker(() =>

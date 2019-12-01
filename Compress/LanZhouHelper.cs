@@ -45,16 +45,25 @@ namespace Compress
             postParameter.Add("type", GetType(extension));
             postParameter.Add("lastModifiedDate", ToGMTFormat(DateTime.Now));
             postParameter.Add("size", stream.Length.ToString());
-            string re = HttpHelper.Execute(new UploadParameterType
+            string re = "";
+            try
             {
-                Url = "https://up.woozooo.com/fileup.php",
-                UploadStream = stream,
-                FileNameValue = fileName,
-                PostParameters = postParameter
-            }, cookieContainer);
+                re= HttpHelper.Execute(new UploadParameterType
+                {
+                    Url = "https://up.woozooo.com/fileup.php",
+                    UploadStream = stream,
+                    FileNameValue = fileName,
+                    PostParameters = postParameter
+                }, cookieContainer);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLogFile("上传" + ex.Message);
+               
+            }
             var lanZouFileResult = Newtonsoft.Json.JsonConvert.DeserializeObject<LanZouFileResult>(re);
             var file_id = lanZouFileResult.text[0].id;
-            var result = HttpHelper.HttpPost<LanZouResult>("https://up.woozooo.com/doupload.php", "task=22&file_id=" + file_id, cookieContainer);
+            LanZouResult result = result = HttpHelper.HttpPost<LanZouResult>("https://up.woozooo.com/doupload.php", "task=22&file_id=" + file_id, cookieContainer); 
             string url = result.info.is_newd + "/" + result.info.f_id;
             string sharepwd = result.info.pwd;
             //设置密码

@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Cache;
 using System.Net.Http;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
@@ -82,7 +83,12 @@ namespace Compress
             request.UserAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.121 Safari/535.2";
             request.ProtocolVersion = HttpVersion.Version11;
             request.AllowAutoRedirect = true;
-            request.ContentLength = byteArray.Length;
+            //request.ContentLength = byteArray.Length;
+            request.Timeout = 10000;
+            request.ServicePoint.Expect100Continue = false;
+            HttpRequestCachePolicy noCachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.NoCacheNoStore);
+            request.CachePolicy = noCachePolicy;
+
             request.CookieContainer = cookieContainer;
             Stream dataStream = request.GetRequestStream();
             dataStream.Write(byteArray, 0, byteArray.Length);
@@ -96,72 +102,83 @@ namespace Compress
             response.Close();
             return responseFromServer;
         }
-
+        private static object obj = new object();
         public static string Execute(UploadParameterType parameter, CookieContainer cookieContainer)
         {
-            using (MemoryStream memoryStream = new MemoryStream())
+            lock (obj)
             {
-                // 1.分界线
-                string boundary = string.Format("----{0}", DateTime.Now.Ticks.ToString("x")),       // 分界线可以自定义参数
-                    beginBoundary = string.Format("--{0}\r\n", boundary),
-                    endBoundary = string.Format("\r\n--{0}--\r\n", boundary);
-                byte[] beginBoundaryBytes = parameter.Encoding.GetBytes(beginBoundary),
-                    endBoundaryBytes = parameter.Encoding.GetBytes(endBoundary);
-                // 2.组装开始分界线数据体 到内存流中
-                memoryStream.Write(beginBoundaryBytes, 0, beginBoundaryBytes.Length);
-                // 3.组装 上传文件附加携带的参数 到内存流中
-                if (parameter.PostParameters != null && parameter.PostParameters.Count > 0)
+                using (MemoryStream memoryStream = new MemoryStream())
                 {
-                    foreach (KeyValuePair<string, string> keyValuePair in parameter.PostParameters)
+                    // 1.分界线
+                    string boundary = string.Format("----{0}", DateTime.Now.Ticks.ToString("x")),       // 分界线可以自定义参数
+                        beginBoundary = string.Format("--{0}\r\n", boundary),
+                        endBoundary = string.Format("\r\n--{0}--\r\n", boundary);
+                    byte[] beginBoundaryBytes = parameter.Encoding.GetBytes(beginBoundary),
+                        endBoundaryBytes = parameter.Encoding.GetBytes(endBoundary);
+                    // 2.组装开始分界线数据体 到内存流中
+                    memoryStream.Write(beginBoundaryBytes, 0, beginBoundaryBytes.Length);
+                    // 3.组装 上传文件附加携带的参数 到内存流中
+                    if (parameter.PostParameters != null && parameter.PostParameters.Count > 0)
                     {
-                        string parameterHeaderTemplate = string.Format("Content-Disposition: form-data; name=\"{0}\"\r\n\r\n{1}\r\n{2}", keyValuePair.Key, keyValuePair.Value, beginBoundary);
-                        byte[] parameterHeaderBytes = parameter.Encoding.GetBytes(parameterHeaderTemplate);
+                        foreach (KeyValuePair<string, string> keyValuePair in parameter.PostParameters)
+                        {
+                            string parameterHeaderTemplate = string.Format("Content-Disposition: form-data; name=\"{0}\"\r\n\r\n{1}\r\n{2}", keyValuePair.Key, keyValuePair.Value, beginBoundary);
+                            byte[] parameterHeaderBytes = parameter.Encoding.GetBytes(parameterHeaderTemplate);
 
-                        memoryStream.Write(parameterHeaderBytes, 0, parameterHeaderBytes.Length);
+                            memoryStream.Write(parameterHeaderBytes, 0, parameterHeaderBytes.Length);
+                        }
                     }
-                }
-                // 4.组装文件头数据体 到内存流中Content-Disposition: form-data; name="upload_file"; filename="（六秘科）黔江府发〔2018〕40号 关于印发黔江区农业产业化奖励扶持办法（试行）的通知[1].doc"Content-Type: application/msword
-                string fileHeaderTemplate = string.Format("Content-Disposition: form-data; name=\"upload_file\"; filename=\"{0}\"\r\nContent-Type: application/msword\r\n\r\n", parameter.FileNameValue);
-                byte[] fileHeaderBytes = parameter.Encoding.GetBytes(fileHeaderTemplate);
-                memoryStream.Write(fileHeaderBytes, 0, fileHeaderBytes.Length);
-                // 5.组装文件流 到内存流中
-                byte[] buffer = new byte[1024 * 1024 * 1];
-                int size = parameter.UploadStream.Read(buffer, 0, buffer.Length);
-                while (size > 0)
-                {
-                    memoryStream.Write(buffer, 0, size);
-                    size = parameter.UploadStream.Read(buffer, 0, buffer.Length);
-                }
-                // 6.组装结束分界线数据体 到内存流中
-                memoryStream.Write(endBoundaryBytes, 0, endBoundaryBytes.Length);
-                // 7.获取二进制数据
-                byte[] postBytes = memoryStream.ToArray();
-                // 8.HttpWebRequest 组装
-                HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(new Uri(parameter.Url, UriKind.RelativeOrAbsolute));
-                webRequest.Method = "POST";
-                webRequest.Timeout = 10000;
-                webRequest.ContentType = string.Format("multipart/form-data; boundary={0}", boundary);
-                webRequest.ContentLength = postBytes.Length;
-                webRequest.CookieContainer = cookieContainer;
-                if (Regex.IsMatch(parameter.Url, "^https://"))
-                {
-                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls;
-                    ServicePointManager.ServerCertificateValidationCallback = CheckValidationResult;
-                }
-                // 9.写入上传请求数据
-                using (Stream requestStream = webRequest.GetRequestStream())
-                {
-                    requestStream.Write(postBytes, 0, postBytes.Length);
-                    requestStream.Close();
-                }
-                // 10.获取响应
-                using (HttpWebResponse webResponse = (HttpWebResponse)webRequest.GetResponse())
-                {
-                    using (StreamReader reader = new StreamReader(webResponse.GetResponseStream(), parameter.Encoding))
+                    // 4.组装文件头数据体 到内存流中Content-Disposition: form-data; name="upload_file"; filename="（六秘科）黔江府发〔2018〕40号 关于印发黔江区农业产业化奖励扶持办法（试行）的通知[1].doc"Content-Type: application/msword
+                    string fileHeaderTemplate = string.Format("Content-Disposition: form-data; name=\"upload_file\"; filename=\"{0}\"\r\nContent-Type: application/msword\r\n\r\n", parameter.FileNameValue);
+                    byte[] fileHeaderBytes = parameter.Encoding.GetBytes(fileHeaderTemplate);
+                    memoryStream.Write(fileHeaderBytes, 0, fileHeaderBytes.Length);
+                    // 5.组装文件流 到内存流中
+                    byte[] buffer = new byte[1024 * 1024 * 1];
+                    int size = parameter.UploadStream.Read(buffer, 0, buffer.Length);
+                    while (size > 0)
                     {
-                        string body = reader.ReadToEnd();
-                        reader.Close();
-                        return body;
+                        memoryStream.Write(buffer, 0, size);
+                        size = parameter.UploadStream.Read(buffer, 0, buffer.Length);
+                    }
+                    // 6.组装结束分界线数据体 到内存流中
+                    memoryStream.Write(endBoundaryBytes, 0, endBoundaryBytes.Length);
+                    // 7.获取二进制数据
+                    byte[] postBytes = memoryStream.ToArray();
+                    // 8.HttpWebRequest 组装
+                    HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(new Uri(parameter.Url, UriKind.RelativeOrAbsolute));
+                    webRequest.Method = "POST";
+                    webRequest.Timeout = 20000;
+                    webRequest.ServicePoint.Expect100Continue = false;
+                    HttpRequestCachePolicy noCachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.NoCacheNoStore);
+                    webRequest.CachePolicy = noCachePolicy;
+                    ServicePoint currentServicePoint = webRequest.ServicePoint;
+                    currentServicePoint.ConnectionLimit = 65500;
+
+                    webRequest.ContentType = string.Format("multipart/form-data; boundary={0}", boundary);
+                    //webRequest.ContentLength = postBytes.Length;
+                    webRequest.KeepAlive = false;
+
+                    webRequest.CookieContainer = cookieContainer;
+                    if (Regex.IsMatch(parameter.Url, "^https://"))
+                    {
+                        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls;
+                        ServicePointManager.ServerCertificateValidationCallback = CheckValidationResult;
+                    }
+                    // 9.写入上传请求数据
+                    using (Stream requestStream = webRequest.GetRequestStream())
+                    {
+                        requestStream.Write(postBytes, 0, postBytes.Length);
+                        requestStream.Close();
+                    }
+                    // 10.获取响应
+                    using (HttpWebResponse webResponse = (HttpWebResponse)webRequest.GetResponse())
+                    {
+                        using (StreamReader reader = new StreamReader(webResponse.GetResponseStream(), parameter.Encoding))
+                        {
+                            string body = reader.ReadToEnd();
+                            reader.Close();
+                            return body;
+                        }
                     }
                 }
             }
